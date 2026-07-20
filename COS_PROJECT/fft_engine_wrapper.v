@@ -1,0 +1,171 @@
+`timescale 1ns / 1ps
+
+module fft_engine_wrapper (
+    input  wire        clk,
+    input  wire        resetn,
+    
+    // Tín hiệu giao tiếp với Vỏ PCPI
+    input  wire        start,        // Xung kích hoạt từ PCPI FSM
+    output reg         done,         // Cờ báo FFT đã tính xong toàn bộ 64 điểm
+    
+    // Tín hiệu giao tiếp với Port B của Dual-Port RAM
+    output reg  [5:0]  ram_addr_b,   // Địa chỉ đọc/ghi RAM
+    output reg         ram_we_b,     // Cờ cho phép ghi RAM
+    output reg  [31:0] ram_wdata_b,  // Dữ liệu ghi vào RAM {16-bit Ảo, 16-bit Thực}
+    input  wire [31:0] ram_rdata_b   // Dữ liệu đọc từ RAM
+);
+
+    // =========================================================
+    // 1. CÁC BIẾN TRẠNG THÁI (FSM)
+    // =========================================================
+    localparam S_IDLE     = 3'd0;
+    localparam S_READ_A   = 3'd1;
+    localparam S_READ_B   = 3'd2;
+    localparam S_CALC     = 3'd3;
+    localparam S_WRITE_Y0 = 3'd4;
+    localparam S_WRITE_Y1 = 3'd5;
+    
+    reg [2:0] state, next_state;
+    
+    // =========================================================
+    // 2. BỘ ĐẾM VÒNG LẶP FFT
+    // =========================================================
+    reg [2:0] stage_idx;      // Đếm từ 0 đến 5 (6 stage)
+    reg [4:0] butterfly_idx;  // Đếm từ 0 đến 31 (32 bướm mỗi stage)
+
+    // =========================================================
+    // 3. THANH GHI LƯU TRỮ DỮ LIỆU TẠM
+    // =========================================================
+    reg [31:0] reg_A, reg_B;
+    
+    wire signed [15:0] Y0_real, Y0_imag;
+    wire signed [15:0] Y1_real, Y1_imag;
+    
+    // =========================================================
+    // 4. KHỞI TẠO ROM CHỨA HỆ SỐ XOAY TWIDDLE FACTORS
+    // =========================================================
+    reg [31:0] twiddle_rom [0:31];
+    initial begin
+        $readmemh("D:/Project_Source/COS_PROJECT/twiddle.hex", twiddle_rom);
+    end
+    
+    // Mạch sinh địa chỉ tra cứu ROM
+    wire [4:0] twiddle_addr = (butterfly_idx << (5 - stage_idx));
+    wire [31:0] current_W   = twiddle_rom[twiddle_addr];
+    
+    wire signed [15:0] W_real = current_W[15:0];  
+    wire signed [15:0] W_imag = current_W[31:16]; 
+
+    // =========================================================
+    // 5. MẠCH ĐỊA CHỈ FFT CHUẨN (Cooley-Tukey Address Generator)
+    // =========================================================
+    wire [5:0] stride = (6'd1 << stage_idx);
+    wire [5:0] addr_offset = ((butterfly_idx >> stage_idx) << (stage_idx + 1));
+    wire [5:0] addr_rem    = (butterfly_idx & (stride - 1));
+    
+    wire [5:0] fft_addr_A  = addr_offset + addr_rem;
+    wire [5:0] fft_addr_B  = fft_addr_A + stride;
+
+    // =========================================================
+    // 6. GỌI LÕI TOÁN HỌC
+    // =========================================================
+    radix2_butterfly math_core (
+        .A_real (reg_A[15:0]),  
+        .A_imag (reg_A[31:16]), 
+        .B_real (reg_B[15:0]),  
+        .B_imag (reg_B[31:16]), 
+        .W_real (W_real),       
+        .W_imag (W_imag),       
+        .Y0_real(Y0_real),      
+        .Y0_imag(Y0_imag),      
+        .Y1_real(Y1_real),      
+        .Y1_imag(Y1_imag)       
+    );
+
+    // =========================================================
+    // 7. MÁY TRẠNG THÁI: CHUYỂN TRẠNG THÁI & ĐẾM LẶP
+    // =========================================================
+    always @(posedge clk or negedge resetn) begin
+        if (!resetn) begin
+            state         <= S_IDLE;
+            stage_idx     <= 3'd0;
+            butterfly_idx <= 5'd0;
+        end else begin
+            state <= next_state;
+            
+            if (state == S_WRITE_Y1) begin
+                if (butterfly_idx == 5'd31) begin
+                    butterfly_idx <= 5'd0;
+                    if (stage_idx == 3'd5) stage_idx <= 3'd0;
+                    else stage_idx <= stage_idx + 1'b1;
+                end else begin
+                    butterfly_idx <= butterfly_idx + 1'b1;
+                end
+            end
+        end
+    end
+
+    // FSM LUỒNG ĐIỀU KHIỂN
+    always @(*) begin
+        next_state = state;
+        case (state)
+            S_IDLE:     if (start) next_state = S_READ_A;
+            S_READ_A:   next_state = S_READ_B;
+            S_READ_B:   next_state = S_CALC;
+            S_CALC:     next_state = S_WRITE_Y0;
+            S_WRITE_Y0: next_state = S_WRITE_Y1;
+            S_WRITE_Y1: begin
+                if (butterfly_idx == 5'd31 && stage_idx == 3'd5) next_state = S_IDLE;
+                else next_state = S_READ_A;
+            end
+            default: next_state = S_IDLE;
+        endcase
+    end
+
+    // =========================================================
+    // 8. MÁY TRẠNG THÁI: ĐIỀU KHIỂN RAM VÀ TÍN HIỆU ĐẦU RA
+    // =========================================================
+    always @(posedge clk) begin
+        if (!resetn) begin
+            done     <= 1'b0;
+            ram_we_b <= 1'b0;
+        end else begin
+            ram_we_b <= 1'b0;
+            done     <= 1'b0;
+
+            case (state)
+                S_IDLE: begin
+                    if (start) done <= 1'b0;
+                end
+                
+                S_READ_A: begin
+                    ram_addr_b <= fft_addr_A;
+                end
+                
+                S_READ_B: begin
+                    reg_A      <= ram_rdata_b;
+                    ram_addr_b <= fft_addr_B;
+                end
+                
+                S_CALC: begin
+                    reg_B      <= ram_rdata_b;
+                end
+                
+                S_WRITE_Y0: begin
+                    ram_addr_b  <= fft_addr_A;
+                    ram_wdata_b <= {Y0_imag, Y0_real};
+                    ram_we_b    <= 1'b1;
+                end
+                
+                S_WRITE_Y1: begin
+                    ram_addr_b  <= fft_addr_B;
+                    ram_wdata_b <= {Y1_imag, Y1_real};
+                    ram_we_b    <= 1'b1;
+                    
+                    if (butterfly_idx == 5'd31 && stage_idx == 3'd5) done <= 1'b1;
+                end
+            endcase
+        end
+    end
+
+endmodule

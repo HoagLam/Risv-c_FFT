@@ -1,0 +1,115 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dD:/FPT/Ki5/COS201/FFT_Coprocessor_IP
+vfft_dual_port_ram
+Z0 !s110 1783665444
+!i10b 1
+!s100 fK6=>nE?SO=mkNIEZdWN=1
+ISh?gGmAzW41?`]cA<5=CY3
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+Z2 dD:/FPT/Ki5/COS201/COS_PROJECT
+w1780847122
+8D:/FPT/Ki5/COS201/COS_PROJECT/fft_dual_port_ram.v
+FD:/FPT/Ki5/COS201/COS_PROJECT/fft_dual_port_ram.v
+L0 3
+Z3 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z4 !s108 1783665444.000000
+!s107 D:/FPT/Ki5/COS201/COS_PROJECT/fft_dual_port_ram.v|
+!s90 -reportprogress|300|-work|work|-stats=none|D:/FPT/Ki5/COS201/COS_PROJECT/fft_dual_port_ram.v|
+!i113 1
+Z5 o-work work
+Z6 tCvgOpt 0
+vfft_engine_wrapper
+R0
+!i10b 1
+!s100 AYIBhb^JG?C2S`gXz?I9i3
+IbJ6G^DbH;:kf4=b>MbW8j3
+R1
+R2
+w1783664579
+8D:/FPT/Ki5/COS201/COS_PROJECT/fft_engine_wrapper.v
+FD:/FPT/Ki5/COS201/COS_PROJECT/fft_engine_wrapper.v
+L0 3
+R3
+r1
+!s85 0
+31
+R4
+!s107 D:/FPT/Ki5/COS201/COS_PROJECT/fft_engine_wrapper.v|
+!s90 -reportprogress|300|-work|work|-stats=none|D:/FPT/Ki5/COS201/COS_PROJECT/fft_engine_wrapper.v|
+!i113 1
+R5
+R6
+vfft_pcpi_coprocessor
+R0
+!i10b 1
+!s100 S^zV>AL[5YiAY2nXh3nLQ3
+IEF_kLEEL1=E5L2hm]ZX=l0
+R1
+R2
+w1783665382
+8D:/FPT/Ki5/COS201/COS_PROJECT/fft_pcpi_coprocessor.v
+FD:/FPT/Ki5/COS201/COS_PROJECT/fft_pcpi_coprocessor.v
+L0 3
+R3
+r1
+!s85 0
+31
+R4
+!s107 D:/FPT/Ki5/COS201/COS_PROJECT/fft_pcpi_coprocessor.v|
+!s90 -reportprogress|300|-work|work|-stats=none|D:/FPT/Ki5/COS201/COS_PROJECT/fft_pcpi_coprocessor.v|
+!i113 1
+R5
+R6
+vradix2_butterfly
+R0
+!i10b 1
+!s100 EAY]=:_GO=iUadZ:@g;oQ0
+Icf@bcSLO?c4Ieoj;;]Fbi3
+R1
+R2
+w1779914690
+8D:/FPT/Ki5/COS201/COS_PROJECT/radix2_butterfly.v
+FD:/FPT/Ki5/COS201/COS_PROJECT/radix2_butterfly.v
+L0 3
+R3
+r1
+!s85 0
+31
+R4
+!s107 D:/FPT/Ki5/COS201/COS_PROJECT/radix2_butterfly.v|
+!s90 -reportprogress|300|-work|work|-stats=none|D:/FPT/Ki5/COS201/COS_PROJECT/radix2_butterfly.v|
+!i113 1
+R5
+R6
+vtb_fft_top
+R0
+!i10b 1
+!s100 TJ;iOTkAfaB7^b_oDYWe<0
+ICne<k^TjPY3_YXennX[3C2
+R1
+R2
+w1783662614
+8D:/FPT/Ki5/COS201/COS_PROJECT/tb_fft_top.v
+FD:/FPT/Ki5/COS201/COS_PROJECT/tb_fft_top.v
+L0 3
+R3
+r1
+!s85 0
+31
+R4
+!s107 D:/FPT/Ki5/COS201/COS_PROJECT/tb_fft_top.v|
+!s90 -reportprogress|300|-work|work|-stats=none|D:/FPT/Ki5/COS201/COS_PROJECT/tb_fft_top.v|
+!i113 1
+R5
+R6

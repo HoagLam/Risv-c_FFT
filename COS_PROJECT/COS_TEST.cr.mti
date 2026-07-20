@@ -1,0 +1,36 @@
+D:/FPT/Ki5/COS201/COS_PROJECT/fft_engine_wrapper.v {1 {vlog -work work -stats=none D:/FPT/Ki5/COS201/COS_PROJECT/fft_engine_wrapper.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module fft_engine_wrapper
+
+Top level modules:
+	fft_engine_wrapper
+
+} {} {}} D:/FPT/Ki5/COS201/COS_PROJECT/radix2_butterfly.v {1 {vlog -work work -stats=none D:/FPT/Ki5/COS201/COS_PROJECT/radix2_butterfly.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module radix2_butterfly
+
+Top level modules:
+	radix2_butterfly
+
+} {} {}} D:/FPT/Ki5/COS201/COS_PROJECT/tb_fft_top.v {1 {vlog -work work -stats=none D:/FPT/Ki5/COS201/COS_PROJECT/tb_fft_top.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module tb_fft_top
+
+Top level modules:
+	tb_fft_top
+
+} {} {}} D:/FPT/Ki5/COS201/COS_PROJECT/fft_pcpi_coprocessor.v {1 {vlog -work work -stats=none D:/FPT/Ki5/COS201/COS_PROJECT/fft_pcpi_coprocessor.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module fft_pcpi_coprocessor
+
+Top level modules:
+	fft_pcpi_coprocessor
+
+} {} {}} D:/FPT/Ki5/COS201/COS_PROJECT/fft_dual_port_ram.v {1 {vlog -work work -stats=none D:/FPT/Ki5/COS201/COS_PROJECT/fft_dual_port_ram.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module fft_dual_port_ram
+
+Top level modules:
+	fft_dual_port_ram
+
+} {} {}}
